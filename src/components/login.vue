@@ -1,14 +1,13 @@
 <template>
-  <div>
-    <router-view></router-view>
-  </div>
+    <h1>login</h1>
 </template>
 
 <script>
 export default {
-  name: "app"
-};
+    name:'login'
+}
 </script>
 
 <style>
+
 </style>
