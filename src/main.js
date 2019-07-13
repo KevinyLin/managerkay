@@ -6,6 +6,12 @@ Vue.config.productionTip = false
 //导入路由相关
 import VueRouter from 'vue-router'
 
+//导入饿了么ui模块
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
+
+Vue.use(ElementUI);
+
 //导入组件
 import index from './components/index.vue'
 import login from './components/login.vue'
