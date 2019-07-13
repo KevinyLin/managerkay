@@ -16,6 +16,9 @@ Vue.use(ElementUI);
 import index from './components/index.vue'
 import login from './components/login.vue'
 
+//导入全局css
+import './assets/base.css'
+
 //use一下
 Vue.use(VueRouter)
 
