@@ -73,7 +73,10 @@ export default {
           });
         });
     }
-  }
+  },
+  created() {
+      this.$message.success('欢迎回来')
+  },
 };
 </script>
 
