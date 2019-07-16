@@ -1,5 +1,9 @@
 //导入axios
 import axios from 'axios'
+//导入路由
+import router from '../router/router'
+//导入vue
+import Vue from 'vue'
 
 //创建副本
 const managerAxios = axios.create({
@@ -29,6 +33,12 @@ managerAxios.interceptors.response.use(
     function(response){
         //响应成功时触发
         //response是服务器返回的数据
+        if(response.data.meta.status==400&&response.data.meta.msg=='无效token'){
+            //伪造了token  强制删除token 并且回到登录页
+            window.sessionStorage.clear();
+            new Vue().$message.error('像偷渡???爬')
+            router.push('/login')
+        }
         return response
     },
     function(error){
