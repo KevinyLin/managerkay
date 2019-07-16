@@ -10,6 +10,16 @@ Vue.use(VueRouter)
 import index from '../views/index.vue'
 import login from '../views/login.vue'
 
+//导入嵌套路由组件
+import users from '../views/users.vue'
+import roles from '../views/roles.vue'
+import rights from '../views/rights.vue'
+import goods from '../views/goods.vue'
+import categories from '../views/categories.vue'
+import orders from '../views/orders.vue'
+import params from '../views/params.vue'
+import reports from '../views/reports.vue'
+
 //路由规则
 const routes = [
   //重定向
@@ -19,7 +29,41 @@ const routes = [
   },
   {
     path: '/index',
-    component: index
+    component: index,
+    children:[
+      {
+        path:'users',
+        component:users
+      },
+      {
+        path:'roles',
+        component:roles
+      },
+      {
+        path:'rights',
+        component:rights
+      },
+      {
+        path:'goods',
+        component:goods
+      },
+      {
+        path:'categories',
+        component:categories
+      },
+      {
+        path:'orders',
+        component:orders
+      },
+      {
+        path:'params',
+        component:params
+      },
+      {
+        path:'reports',
+        component:reports
+      }
+    ]
   },
   {
     path: '/login',

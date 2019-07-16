@@ -21,35 +21,37 @@
     </el-header>
     <el-container>
       <el-aside width="200px" class="my-aside">
-        <el-menu default-active="2" class="el-menu-vertical-demo" :unique-opened="true">
-          <el-submenu index="1">
+        <el-menu default-active="2" class="el-menu-vertical-demo" :unique-opened="true" router>
+          <el-submenu v-for="(item,index) in menusList" :index="'' + index">
             <template slot="title">
               <i class="el-icon-location"></i>
-              <span>导航一</span>
+              <span>{{item.authName}}</span>
             </template>
-            <el-menu-item index="1-1">
-              <i class="el-icon-menu"></i>选项1
-            </el-menu-item>
-          </el-submenu>
-          <el-submenu index="2">
-            <template slot="title">
-              <i class="el-icon-location"></i>
-              <span>导航二</span>
-            </template>
-            <el-menu-item index="1-1">
-              <i class="el-icon-menu"></i>选项1
+            <el-menu-item v-for="it in item.children" :index="'/index/' + it.path">
+              <i class="el-icon-menu"></i>
+              {{it.authName}}
             </el-menu-item>
           </el-submenu>
         </el-menu>
       </el-aside>
-      <el-main class="my-main"></el-main>
+      <el-main class="my-main">
+        <!-- 嵌套路由出口 -->
+        <router-view></router-view>
+      </el-main>
     </el-container>
   </el-container>
 </template>
 
 <script>
+import { menus } from "../api/http";
 export default {
   name: "index",
+  data() {
+    return {
+      //左侧菜单列表
+      menusList: []
+    };
+  },
   methods: {
     logout() {
       this.$confirm("是否退出登录", "提示", {
@@ -63,8 +65,8 @@ export default {
             message: "登出成功!"
           });
           //删除令牌且跳转到登录页
-          window.sessionStorage.removeItem('token')
-          this.$router.push('/login')
+          window.sessionStorage.removeItem("token");
+          this.$router.push("/login");
         })
         .catch(() => {
           this.$message({
@@ -75,8 +77,13 @@ export default {
     }
   },
   created() {
-      this.$message.success('欢迎回来')
-  },
+    this.$message.success("欢迎回来");
+    //调用方法获取左侧菜单列表
+    menus().then(backData => {
+      // console.log(backData)
+      this.menusList = backData.data.data;
+    });
+  }
 };
 </script>
 
@@ -102,6 +109,7 @@ export default {
   }
   .my-main {
     background-color: #e9eef3;
+    padding-top: 0;
   }
 }
 </style>
