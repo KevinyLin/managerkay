@@ -77,12 +77,16 @@ export default {
     }
   },
   created() {
-    this.$message.success("欢迎回来");
     //调用方法获取左侧菜单列表
     menus().then(backData => {
       // console.log(backData)
       this.menusList = backData.data.data;
     });
+  },
+  beforeDestroy() {
+    if (window.sessionStorage.getItem("token") != undefined) {
+      this.$message.success("欢迎回来");
+    }
   }
 };
 </script>

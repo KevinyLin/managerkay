@@ -9,6 +9,7 @@ Vue.use(VueRouter)
 //导入组件
 import index from '../views/index.vue'
 import login from '../views/login.vue'
+import error from '../views/error.vue'
 
 //导入嵌套路由组件
 import users from '../views/users.vue'
@@ -73,6 +74,16 @@ const routes = [
       //是否需要登录状态验证的标记 为否代表不需要做登录验证
       needLogin: false
     }
+  },
+  //统一错误页
+  {
+    path:'/error',
+    component:error
+  },
+  //重定向实现错误URL跳转统一错误页
+  {
+    path:'*',
+    redirect:'/error'
   }
 ]
 
