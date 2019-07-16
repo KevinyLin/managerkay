@@ -3,7 +3,7 @@
     <!-- 顶部面包屑 -->
     <mybread nav1="数据统计" nav2="数据报表"></mybread>
     <div class="reportsdiv">
-      <div ref="reportsdiv" style="width: 800px;height:550px;"></div>
+      <div ref="reportsdiv" style="width: 800px;height:500px;"></div>
     </div>
   </div>
 </template>
@@ -114,5 +114,6 @@ export default {
 <style lang='less' scoped>
 .reportsdiv {
   background-color: #fff;
+  padding: 20px;
 }
 </style>

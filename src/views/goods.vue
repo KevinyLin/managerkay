@@ -3,7 +3,7 @@
     <!-- 顶部面包屑 -->
     <mybread nav1='商品管理' nav2='商品列表'></mybread>
     <el-row>
-      <el-col :span="5">
+      <el-col :span="4">
         <!-- 输入框 -->
         <el-input placeholder="请输入内容" v-model="input3" class="input-with-select">
           <el-button slot="append" icon="el-icon-search"></el-button>
@@ -11,7 +11,7 @@
       </el-col>
       <el-col :span="2">
         <!-- 按钮 -->
-        <el-button type="success" plain>添加商品</el-button>
+        <el-button type="success" plain class="mybtn">添加商品</el-button>
       </el-col>
     </el-row>
 
@@ -26,8 +26,8 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page="pageIndex"
-      :page-sizes="[100, 200, 300, 400]"
-      :page-size="100"
+      :page-sizes="[10, 20, 30, 40]"
+      :page-size="10"
       layout="total, sizes, prev, pager, next, jumper"
       :total="400"
     ></el-pagination>
@@ -76,5 +76,7 @@ export default {
 </script>
 
 <style lang='less' scoped>
-
+.mybtn{
+  margin-left: 5px;
+}
 </style>

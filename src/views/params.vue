@@ -3,19 +3,21 @@
     <!-- 顶部面包屑 -->
     <mybread nav1="商品管理" nav2="分类参数"></mybread>
     <!-- alert -->
-    <el-alert title="注意:只允许为第三级分类设置相关参数!" type="warning" show-icon></el-alert>
+    <el-alert title="注意 : 只允许为第三级分类设置相关参数!" type="warning" show-icon class="myalert"></el-alert>
     <!-- 级联选择器 -->
-    请选择商品分类:
+    请选择商品分类 : 
     <el-cascader
       v-model="value"
       :options="options"
       :props="{ expandTrigger: 'hover' }"
       @change="handleChange"
+      placeholder='请选择商品分类'
+      class="mycascder"
     ></el-cascader>
     <!-- tab -->
-    <el-tabs v-model="activeName" @tab-click="handleClick">
+    <el-tabs v-model="activeName" @tab-click="handleClick" class="mytab">
       <el-tab-pane label="动态参数" name="first">
-        <el-button type="primary" disabled>添加动态参数</el-button>
+        <el-button type="primary" disabled class="mybtn">添加动态参数</el-button>
         <el-table :data="tableData" border style="width: 100%">
           <el-table-column prop="date" label="日期" width="180"></el-table-column>
           <el-table-column prop="name" label="姓名" width="180"></el-table-column>
@@ -23,7 +25,7 @@
         </el-table>
       </el-tab-pane>
       <el-tab-pane label="静态参数" name="second">
-        <el-button type="primary" disabled>添加静态参数</el-button>
+        <el-button type="primary" disabled class="mybtn">添加静态参数</el-button>
         <el-table :data="tableData" border style="width: 100%">
           <el-table-column prop="date" label="日期" width="180"></el-table-column>
           <el-table-column prop="name" label="姓名" width="180"></el-table-column>
@@ -327,4 +329,16 @@ export default {
 </script>
 
 <style lang='less' scoped>
+.myalert{
+  margin: 20px 0;
+}
+.mycascder{
+  margin-left: 10px;
+}
+.mytab{
+  margin-top: 20px;
+  .mybtn{
+    margin-bottom: 15px;
+  }
+}
 </style>
