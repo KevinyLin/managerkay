@@ -203,12 +203,14 @@ export default {
       })
         .then(() => {
           this.$message({
+            showClose: true,
             type: "success",
             message: "删除成功!"
           });
         })
         .catch(() => {
           this.$message({
+            showClose: true,
             type: "info",
             message: "已取消删除"
           });

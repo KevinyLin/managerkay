@@ -61,6 +61,7 @@ export default {
       })
         .then(() => {
           this.$message({
+            showClose: true,
             type: "success",
             message: "登出成功!"
           });
@@ -70,6 +71,7 @@ export default {
         })
         .catch(() => {
           this.$message({
+            showClose: true,
             type: "info",
             message: "阿里嘎多哇抠你急哇!"
           });
