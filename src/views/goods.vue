@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 顶部面包屑 -->
-    <mybread nav1='商品管理' nav2='商品列表'></mybread>
+    <mybread nav1="商品管理" nav2="商品列表"></mybread>
     <el-row>
       <el-col :span="4">
         <!-- 输入框 -->
@@ -17,9 +17,19 @@
 
     <!-- table -->
     <el-table :data="tableData" style="width: 100%" border>
-      <el-table-column prop="date" label="日期" width="180"></el-table-column>
-      <el-table-column prop="name" label="姓名" width="180"></el-table-column>
-      <el-table-column prop="address" label="地址"></el-table-column>
+      <el-table-column type="index" label="#" width="50"></el-table-column>
+      <el-table-column prop="goods_name" label="商品名称" width="500"></el-table-column>
+      <el-table-column prop="goods_price" label="商品价格(元)" width="120"></el-table-column>
+      <el-table-column prop="goods_weight" label="商品重量" width="80"></el-table-column>
+      <el-table-column prop="add_time" label="创建时间" width="160">
+        <template slot-scope="scope">
+          {{scope.row.add_time | formatTime('YYYY-MM-DD HH:mm:ss')}}
+        </template>
+      </el-table-column>
+      <el-table-column label="操作">
+        <el-button type="primary" plain icon="el-icon-edit" size="mini"></el-button>
+        <el-button type="danger" plain icon="el-icon-delete" size="mini"></el-button>
+      </el-table-column>
     </el-table>
     <!-- 分页 -->
     <el-pagination
@@ -29,12 +39,13 @@
       :page-sizes="[10, 20, 30, 40]"
       :page-size="10"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="400"
+      :total="total"
     ></el-pagination>
   </div>
 </template>
 
 <script>
+import { goods } from "../api/http";
 export default {
   name: "goods",
   data() {
@@ -43,40 +54,45 @@ export default {
       input3: "",
       //当前页
       pageIndex: 1,
+      //总条数
+      total: 0,
+      //页容量
+      pagesize: 10,
       //表格数据
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1517 弄"
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1519 弄"
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1516 弄"
-        }
-      ]
+      tableData: []
     };
   },
   methods: {
-    handleSizeChange() {},
-    handleCurrentChange() {}
+    handleSizeChange(val) {
+      this.pagesize = val;
+      this.pageIndex = 1;
+      this.getGoodsList(this.pageIndex,this.pagesize)
+    },
+    handleCurrentChange(val) {
+      this.pageIndex = val;
+      this.getGoodsList(this.pageIndex,this.pagesize)
+    },
+    getGoodsList(pagenum,pagesize) {
+      goods({
+        pagenum: pagenum,
+        pagesize: pagesize
+      }).then(backData => {
+        // console.log(backData)
+        //获取总条数
+        this.total = backData.data.data.total;
+        this.tableData = backData.data.data.goods;
+      });
+    }
+  },
+  created() {
+    //进来获取商品列表
+    this.getGoodsList(this.pageIndex,this.pagesize)
   }
 };
 </script>
 
 <style lang='less' scoped>
-.mybtn{
+.mybtn {
   margin-left: 5px;
 }
 </style>

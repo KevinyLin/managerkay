@@ -337,7 +337,7 @@ export default {
 }
 .mytab{
   margin-top: 20px;
-  .mybtn{
+  .mybtn{ 
     margin-bottom: 15px;
   }
 }

@@ -19,6 +19,7 @@
 </template>
 
 <script>
+import users from '../api/http'
 export default {
   name: "roles",
   data() {
@@ -48,8 +49,9 @@ export default {
       ]
     };
   },
-  methods: {
-  }
+  created() {
+    
+  },
 };
 </script>
 

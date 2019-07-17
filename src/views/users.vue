@@ -1,9 +1,9 @@
 <template>
   <div>
     <!-- 顶部面包屑 -->
-    <mybread nav1='用户管理' nav2='用户列表'></mybread>
+    <mybread nav1="用户管理" nav2="用户列表"></mybread>
     <el-row>
-      <el-col :span="5">
+      <el-col :span="4">
         <!-- 输入框 -->
         <el-input placeholder="请输入内容" v-model="input3" class="input-with-select">
           <el-button slot="append" icon="el-icon-search"></el-button>
@@ -17,9 +17,25 @@
 
     <!-- table -->
     <el-table :data="tableData" style="width: 100%" border>
-      <el-table-column prop="date" label="日期" width="180"></el-table-column>
-      <el-table-column prop="name" label="姓名" width="180"></el-table-column>
-      <el-table-column prop="address" label="地址"></el-table-column>
+      <el-table-column type='index' label="#" width="30"></el-table-column>
+      <el-table-column prop="username" label="姓名" width="160"></el-table-column>
+      <el-table-column prop="email" label="邮箱" width="300"></el-table-column>
+      <el-table-column prop="mobile" label="电话" width="300"></el-table-column>
+      <el-table-column prop="mg_state" label="用户状态" width="80">
+        <template slot-scope="scope">
+            <!-- scope.row就是当前绑定的数据对象 -->
+         <el-switch
+            v-model="scope.row.mg_state"
+            active-color="#13ce66"
+            inactive-color="#ff4949">
+          </el-switch>
+      </template>
+      </el-table-column>
+      <el-table-column label="操作" width="200">
+        <el-button type="primary" plain icon="el-icon-edit" size="mini"></el-button>
+        <el-button type="danger" plain icon="el-icon-delete" size="mini"></el-button>
+        <el-button type="warning" plain icon="el-icon-check" size="mini"></el-button>
+      </el-table-column> 
     </el-table>
     <!-- 分页 -->
     <el-pagination
@@ -29,12 +45,13 @@
       :page-sizes="[10, 20]"
       :page-size="10"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="5"
+      :total="total"
     ></el-pagination>
   </div>
 </template>
 
 <script>
+import { users } from "../api/http";
 export default {
   name: "users",
   data() {
@@ -43,38 +60,47 @@ export default {
       input3: "",
       //当前页
       pageIndex: 1,
+      //总条目
+      total: 0,
+      //每页显示条数
+      pagesize: 10,
       //表格数据
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1517 弄"
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1519 弄"
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1516 弄"
-        }
-      ]
+      tableData: [],
     };
   },
   methods: {
-    handleSizeChange() {},
-    handleCurrentChange() {}
+    handleSizeChange(val) {
+      // console.log(val)
+      //页容量改变触发事件
+      this.pagesize = val;
+      this.pageIndex = 1;
+      this.getUserList(this.pageIndex,this.pagesize)
+    },
+    //当前页改变时触发
+    handleCurrentChange(val) {
+      this.pageIndex = val;
+      this.getUserList(this.pageIndex,this.pagesize)
+    },
+    //获取用户列表
+    getUserList(pageIndex,pagesize){
+      users({
+      //当前页
+      pagenum: pageIndex,
+      //页容量
+      pagesize: pagesize
+    }).then(backData => {
+      // console.log(backData)
+      //获取总条数
+      this.total = backData.data.data.total;
+      this.tableData = backData.data.data.users;
+    });
+    }
+  },
+  created() {
+   this.getUserList(this.pageIndex,this.pagesize)
   }
 };
 </script>
 
 <style lang='less' scoped>
-
 </style>
