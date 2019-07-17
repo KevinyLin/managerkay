@@ -78,6 +78,21 @@ export const users = ({
     })
 }
 
+//添加用户
+export const usersAdd = ({
+    username,
+    password,
+    email,
+    mobile
+}) => {
+    return managerAxios.post('users', {
+        username,
+        password,
+        email,
+        mobile
+    })
+}
+
 //获取商品列表
 export const goods = ({
     query,
