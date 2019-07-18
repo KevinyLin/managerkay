@@ -5,13 +5,18 @@
     <el-row>
       <el-col :span="4">
         <!-- 输入框 -->
-        <el-input placeholder="请输入内容" v-model="input3" class="input-with-select">
-          <el-button slot="append" icon="el-icon-search"></el-button>
+        <el-input
+          placeholder="请输入内容"
+          v-model="query"
+          @keyup.enter.native="serachUser"
+          class="input-with-select"
+        >
+          <el-button slot="append" icon="el-icon-search" @click="serachUser"></el-button>
         </el-input>
       </el-col>
       <el-col :span="2">
         <!-- 按钮 -->
-        <el-button type="success" plain @click="isShow = true">添加用户</el-button>
+        <el-button type="success" plain @click="dialogFormVisible = true">添加用户</el-button>
       </el-col>
     </el-row>
 
@@ -24,18 +29,23 @@
       <el-table-column prop="mg_state" label="用户状态" width="80">
         <template slot-scope="scope">
           <!-- scope.row就是当前绑定的数据对象 -->
-          <el-switch v-model="scope.row.mg_state" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
+          <el-switch
+            v-model="scope.row.mg_state"
+            active-color="#13ce66"
+            @click.native="changeUserState(scope.row)"
+            inactive-color="#ff4949"
+          ></el-switch>
         </template>
       </el-table-column>
       <el-table-column label="操作" width="200">
-        <template slot-scope="scope2">
-          <el-button type="primary" plain icon="el-icon-edit" size="mini"></el-button>
+        <template slot-scope="scope">
+          <el-button type="primary" plain icon="el-icon-edit" size="mini" @click="edituser(scope.row)"></el-button>
           <el-button
             type="danger"
             plain
             icon="el-icon-delete"
             size="mini"
-            @click="handleDelete(scope2.row.id)"
+            @click="handleDelete(scope.row.id)"
           ></el-button>
           <el-button type="warning" plain icon="el-icon-check" size="mini"></el-button>
         </template>
@@ -51,53 +61,74 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="total"
     ></el-pagination>
-    <!-- 遮罩层+添加用户模块 -->
-    <div class="shade" v-show="isShow">
-      <div class="shadebox">
-        <h4>添加用户</h4>
-        <div class="adduser">
-          <el-form
-            :model="ruleForm"
-            status-icon
-            :rules="rules"
-            ref="ruleForm"
-            label-width="100px"
-            class="demo-ruleForm"
-          >
-            <el-form-item label="用户名" prop="username">
-              <el-input type="text" v-model="ruleForm.username"></el-input>
-            </el-form-item>
-            <el-form-item label="密码" prop="password">
-              <el-input type="password" v-model="ruleForm.password" autocomplete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="邮箱">
-              <el-input type="text" v-model="ruleForm.email"></el-input>
-            </el-form-item>
-            <el-form-item label="电话">
-              <el-input type="text" v-model="ruleForm.mobile"></el-input>
-            </el-form-item>
-            <el-form-item class="useraddb">
-              <el-button @click="closeshade">取消</el-button>
-              <el-button type="primary" @click="submitForm('ruleForm')">确定</el-button>
-            </el-form-item>
-          </el-form>
-        </div>
+    <!-- 添加用户对话框 -->
+    <el-dialog title="添加用户" :visible.sync="dialogFormVisible">
+      <el-form :model="form" :rules="rules" ref="ruleForm">
+        <el-form-item label="用户名" label-width="120px" prop="username">
+          <el-input v-model="form.username" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="密码" label-width="120px" prop="password">
+          <el-input v-model="form.password" type="password" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱" label-width="120px">
+          <el-input v-model="form.email" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="电话" label-width="120px">
+          <el-input v-model="form.mobile" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
       </div>
-    </div>
+    </el-dialog>
+
+    <!-- 编辑用户对话框 -->
+    <el-dialog title="修改用户" :visible.sync="editFormVisible">
+      <el-form :model="editForm" :rules="rules" ref="ruleForm">
+        <el-form-item label="用户名" label-width="120px" prop="username">
+          <el-input v-model="editForm.username" autocomplete="off" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱" label-width="120px">
+          <el-input v-model="editForm.email" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="电话" label-width="120px">
+          <el-input v-model="editForm.mobile" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="editFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="changeUser">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-//获取用户列表接口
-import { users } from "../api/http";
-//添加用户接口
-import { usersAdd } from "../api/http";
+//导入接口
+import { users, usersAdd, changeState, deleteUser,putUser } from "../api/http";
 export default {
   name: "users",
   data() {
     return {
-      //搜索框双向绑定
-      input3: "",
+      //添加用户对话框是否显示
+      dialogFormVisible: false,
+      form: {
+        username: "",
+        password: "",
+        email: "",
+        mobile: ""
+      },
+      //编辑用户对话框是否显示
+      editFormVisible: false,
+      editForm: {
+        username: "",
+        email: "",
+        mobile: "",
+        id:"",
+      },
+      //用户列表查询双向绑定
+      query: "",
       //当前页
       pageIndex: 1,
       //总条目
@@ -106,15 +137,6 @@ export default {
       pagesize: 10,
       //表格数据
       tableData: [],
-      //遮罩层是否显示
-      isShow: false,
-      //表单绑定数据
-      ruleForm: {
-        password: "",
-        username: "",
-        email: "",
-        mobile: ""
-      },
       rules: {
         //验证规则
         username: [
@@ -133,6 +155,60 @@ export default {
     };
   },
   methods: {
+    //修改用户信息-打开对话框
+    edituser(row){
+      this.editForm = row;
+      this.editFormVisible = true;
+    },
+    //修改用户信息-发送请求
+    changeUser(){
+      putUser(this.editForm).then(backData=>{
+        // console.log(backData)
+        if(backData.data.meta.status==200){
+          this.editFormVisible = false;
+          this.getUserList(this.pageIndex, this.pagesize);
+        }
+      })
+    },
+    //改变用户状态
+    changeUserState(row) {
+      // console.log(row)
+      changeState({
+        id: row.id,
+        type: row.mg_state
+      }).then(backdata => {
+        if (backdata.data.meta.status == 200) {
+          this.$message.success("状态设置成功");
+        }
+      });
+    },
+    //添加用户
+    submitForm(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          //成功时调用接口添加用户
+          usersAdd(this.form).then(backData => {
+            // console.log(backData)
+            if (backData.data.meta.status == 201) {
+              //创建成功关闭对话框并重新获取数据渲染
+              this.dialogFormVisible = false;
+              this.getUserList(this.pageIndex, this.pagesize);
+              (this.form.username = ""),
+                (this.form.password = ""),
+                (this.form.email = ""),
+                (this.form.mobile = "");
+            }
+          });
+        } else {
+          this.$message.warning("用户名密码不能为空");
+          return false;
+        }
+      });
+    },
+    //搜索用户
+    serachUser() {
+      this.getUserList(this.pageIndex, this.pagesize, this.query);
+    },
     handleSizeChange(val) {
       // console.log(val)
       //页容量改变触发事件
@@ -146,53 +222,19 @@ export default {
       this.getUserList(this.pageIndex, this.pagesize);
     },
     //获取用户列表
-    getUserList(pageIndex, pagesize) {
+    getUserList(pageIndex, pagesize, query) {
       users({
         //当前页
         pagenum: pageIndex,
         //页容量
-        pagesize: pagesize
+        pagesize: pagesize,
+        query
       }).then(backData => {
         // console.log(backData)
         //获取总条数
         this.total = backData.data.data.total;
         this.tableData = backData.data.data.users;
       });
-    },
-    submitForm(formName) {
-      this.$refs[formName].validate(valid => {
-        if (valid) {
-          //验证通过则发送请求添加用户
-          usersAdd({
-            username: this.ruleForm.username,
-            password: this.ruleForm.password,
-            email: this.ruleForm.email,
-            mobile: this.ruleForm.mobile
-          }).then(backData => {
-            if (backData.data.meta.status == 201) {
-              //创建成功关闭遮罩层
-              this.isShow = false;
-              //清空表格并重新渲染
-              this.getUserList(this.pageIndex, this.pagesize);
-              this.ruleForm.username = "";
-              this.ruleForm.password = "";
-              this.ruleForm.email = "";
-              this.ruleForm.mobile = "";
-            }
-          });
-        } else {
-          this.$message.error("用户名密码不能为空");
-          return false;
-        }
-      });
-    },
-    //点击取消关闭遮罩层
-    closeshade() {
-      this.isShow = false;
-      this.ruleForm.username = "";
-      this.ruleForm.password = "";
-      this.ruleForm.email = "";
-      this.ruleForm.mobile = "";
     },
     //点击删除按钮删除用户数据
     handleDelete(id) {
@@ -202,10 +244,15 @@ export default {
         type: "warning"
       })
         .then(() => {
-          this.$message({
-            showClose: true,
-            type: "success",
-            message: "删除成功!"
+          deleteUser({
+            id
+          }).then(backData => {
+            // console.log(backData)
+            if (backData.data.meta.status == 200) {
+              //删除成功
+              this.$message.success("状态设置成功");
+              this.getUserList(this.pageIndex, this.pagesize);
+            }
           });
         })
         .catch(() => {
@@ -224,34 +271,4 @@ export default {
 </script>
 
 <style lang='less' scoped>
-.shade {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 999;
-  .shadebox {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 960px;
-    height: 430px;
-    background-color: #fff;
-    transform: translate(-50%, -50%);
-    h4 {
-      font-weight: normal;
-      font-size: 18px;
-      padding: 20px 0 0 20px;
-    }
-    .adduser {
-      padding: 30px 20px;
-    }
-    .useraddb {
-      float: right;
-      margin-top: 40px;
-    }
-  }
-}
 </style>

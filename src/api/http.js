@@ -127,3 +127,21 @@ export const orders = ({
 export const rights = () => {
     return managerAxios.get(`rights/list`)
 }
+
+//修改用户状态
+export const changeState = ({id,type})=>{
+    return managerAxios.put(`users/${id}/state/${type}`)
+}
+
+//删除用户
+export const deleteUser = ({id})=>{
+    return managerAxios.delete(`users/${id}`)
+}
+
+//修改用户信息
+export const putUser = ({id,email,mobile})=>{
+    return managerAxios.put(`users/${id}`,{
+        email,
+        mobile
+    })
+}
