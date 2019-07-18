@@ -145,3 +145,8 @@ export const goods = ({
         }
     })
 }
+
+//删除商品
+export const deleteGoods = ({id})=>{
+    return managerAxios.delete(`goods/${id}`)
+}

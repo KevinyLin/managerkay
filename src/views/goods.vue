@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import { goods } from "../api/http";
+import { goods,deleteGoods } from "../api/http";
 export default {
   name: "goods",
   data() {
@@ -71,11 +71,32 @@ export default {
     //删除一个商品
     deleteOne(row){
       // console.log(row)
-      //goods_id
+      this.$confirm("此操作将永久删除该商品数据, 是否继续?", "警告", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          deleteGoods({id:row.goods_id}).then(backData => {
+            // console.log(backData)
+            if (backData.data.meta.status == 200) {
+              //删除成功
+              this.$message.success("删除成功");
+              this.getGoodsList(this.pageIndex, this.pagesize);
+            }
+          });
+        })
+        .catch(() => {
+          this.$message({
+            showClose: true,
+            type: "info",
+            message: "已取消删除"
+          });
+        });
     },
     //搜索商品
     searchGoods() {
-      this.getGoodsList(this.pageIndex, this.pagesize, this.query);
+      this.getGoodsList(this.pageIndex, this.pagesize,this.query);
     },
     handleSizeChange(val) {
       this.pagesize = val;
