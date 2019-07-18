@@ -7,20 +7,24 @@
       <el-table-column type="index" label="#" width="50"></el-table-column>
       <el-table-column prop="order_number" label="订单编号" width="300"></el-table-column>
       <el-table-column prop="order_price" label="订单价格" width="80"></el-table-column>
-      <el-table-column prop="pay_status" label="是否付款" width="100" align='center'>
+      <el-table-column prop="pay_status" label="是否付款" width="100" align="center">
         <template slot-scope="scope2">
-          <el-tag type="danger" v-if='scope2.row.pay_status==0' >未付款</el-tag>
-          <el-tag type="success" v-if='scope2.row.pay_status==1' >已付款</el-tag>
+          <el-tag type="danger" v-if="scope2.row.pay_status==0">未付款</el-tag>
+          <el-tag type="success" v-if="scope2.row.pay_status==1">已付款</el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="is_send" label="是否发货" width="380"></el-table-column>
       <el-table-column prop="create_time" label="下单时间" width="380">
-        <template slot-scope="scope">
-          {{scope.row.create_time | formatTime('YYYY-MM-DD HH:mm:ss')}}
-        </template>
+        <template slot-scope="scope">{{scope.row.create_time | formatTime('YYYY-MM-DD HH:mm:ss')}}</template>
       </el-table-column>
       <el-table-column label="操作">
-        <el-button type="primary" plain icon="el-icon-edit" size="mini"></el-button>
+        <el-button
+          type="primary"
+          plain
+          icon="el-icon-edit"
+          size="mini"
+          @click="dialogFormVisible = true"
+        ></el-button>
       </el-table-column>
     </el-table>
     <!-- 分页 -->
@@ -33,6 +37,19 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="total"
     ></el-pagination>
+
+    <!-- 编辑订单对话框 -->
+    <el-dialog title="修改订单地址(未完成)" :visible.sync="dialogFormVisible">
+      <el-form :model="form">
+        <el-form-item label="详细地址" label-width="120px">
+          <el-input v-model="form.name" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -42,6 +59,10 @@ export default {
   name: "orders",
   data() {
     return {
+      //编辑对话框是否显示
+      dialogFormVisible: false,
+      //对话框数据
+      form: {},
       //当前页
       pageIndex: 1,
       //总条数
@@ -53,16 +74,16 @@ export default {
     };
   },
   methods: {
-        handleSizeChange(val) {
+    handleSizeChange(val) {
       this.pagesize = val;
       this.pageIndex = 1;
-      this.getOrderList(this.pageIndex,this.pagesize)
+      this.getOrderList(this.pageIndex, this.pagesize);
     },
     handleCurrentChange(val) {
       this.pageIndex = val;
-      this.getOrderList(this.pageIndex,this.pagesize)
+      this.getOrderList(this.pageIndex, this.pagesize);
     },
-    getOrderList(pagenum,pagesize) {
+    getOrderList(pagenum, pagesize) {
       orders({
         pagenum: pagenum,
         pagesize: pagesize
@@ -75,7 +96,7 @@ export default {
     }
   },
   created() {
-    this.getOrderList(this.pageIndex,this.pagesize)
+    this.getOrderList(this.pageIndex, this.pagesize);
   }
 };
 </script>
