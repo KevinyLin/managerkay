@@ -5,8 +5,13 @@
     <el-row>
       <el-col :span="4">
         <!-- 输入框 -->
-        <el-input placeholder="请输入内容" v-model="input3" class="input-with-select">
-          <el-button slot="append" icon="el-icon-search"></el-button>
+        <el-input
+          placeholder="请输入内容"
+          v-model="query"
+          @keyup.enter.trim.native="searchGoods"
+          class="input-with-select"
+        >
+          <el-button slot="append" icon="el-icon-search" @click="searchGoods"></el-button>
         </el-input>
       </el-col>
       <el-col :span="2">
@@ -21,14 +26,14 @@
       <el-table-column prop="goods_name" label="商品名称" width="500"></el-table-column>
       <el-table-column prop="goods_price" label="商品价格(元)" width="120"></el-table-column>
       <el-table-column prop="goods_weight" label="商品重量" width="80"></el-table-column>
-      <el-table-column prop="add_time" label="创建时间" width="160">
-        <template slot-scope="scope">
-          {{scope.row.add_time | formatTime('YYYY-MM-DD HH:mm:ss')}}
-        </template>
+      <el-table-column label="创建时间" width="160">
+        <template slot-scope="scope">{{scope.row.add_time | formatTime('YYYY-MM-DD HH:mm:ss')}}</template>
       </el-table-column>
       <el-table-column label="操作">
-        <el-button type="primary" plain icon="el-icon-edit" size="mini"></el-button>
-        <el-button type="danger" plain icon="el-icon-delete" size="mini"></el-button>
+        <template slot-scope="scope">
+          <el-button type="primary" plain icon="el-icon-edit" size="mini"></el-button>
+          <el-button type="danger" plain icon="el-icon-delete" size="mini" @click="deleteOne(scope.row)" ></el-button>
+        </template>
       </el-table-column>
     </el-table>
     <!-- 分页 -->
@@ -51,7 +56,7 @@ export default {
   data() {
     return {
       //搜索框双向绑定
-      input3: "",
+      query: "",
       //当前页
       pageIndex: 1,
       //总条数
@@ -63,19 +68,29 @@ export default {
     };
   },
   methods: {
+    //删除一个商品
+    deleteOne(row){
+      // console.log(row)
+      //goods_id
+    },
+    //搜索商品
+    searchGoods() {
+      this.getGoodsList(this.pageIndex, this.pagesize, this.query);
+    },
     handleSizeChange(val) {
       this.pagesize = val;
       this.pageIndex = 1;
-      this.getGoodsList(this.pageIndex,this.pagesize)
+      this.getGoodsList(this.pageIndex, this.pagesize);
     },
     handleCurrentChange(val) {
       this.pageIndex = val;
-      this.getGoodsList(this.pageIndex,this.pagesize)
+      this.getGoodsList(this.pageIndex, this.pagesize);
     },
-    getGoodsList(pagenum,pagesize) {
+    getGoodsList(pagenum, pagesize, query) {
       goods({
-        pagenum: pagenum,
-        pagesize: pagesize
+        pagenum,
+        pagesize,
+        query
       }).then(backData => {
         // console.log(backData)
         //获取总条数
@@ -86,7 +101,7 @@ export default {
   },
   created() {
     //进来获取商品列表
-    this.getGoodsList(this.pageIndex,this.pagesize)
+    this.getGoodsList(this.pageIndex, this.pagesize);
   }
 };
 </script>

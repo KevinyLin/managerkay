@@ -93,21 +93,6 @@ export const usersAdd = ({
     })
 }
 
-//获取商品列表
-export const goods = ({
-    query,
-    pagenum,
-    pagesize
-}) => {
-    return managerAxios.get('goods', {
-        params: {
-            query,
-            pagenum,
-            pagesize
-        }
-    })
-}
-
 //获取订单列表
 export const orders = ({
     query,
@@ -143,5 +128,20 @@ export const putUser = ({id,email,mobile})=>{
     return managerAxios.put(`users/${id}`,{
         email,
         mobile
+    })
+}
+
+//获取商品列表
+export const goods = ({
+    query,
+    pagenum,
+    pagesize
+}) => {
+    return managerAxios.get('goods', {
+        params: {
+            query,
+            pagenum,
+            pagesize
+        }
     })
 }

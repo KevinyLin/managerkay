@@ -26,7 +26,7 @@
       <el-table-column prop="username" label="姓名" width="160"></el-table-column>
       <el-table-column prop="email" label="邮箱" width="300"></el-table-column>
       <el-table-column prop="mobile" label="电话" width="300"></el-table-column>
-      <el-table-column prop="mg_state" label="用户状态" width="80">
+      <el-table-column label="用户状态" width="80">
         <template slot-scope="scope">
           <!-- scope.row就是当前绑定的数据对象 -->
           <el-switch
@@ -227,7 +227,7 @@ export default {
         //当前页
         pagenum: pageIndex,
         //页容量
-        pagesize: pagesize,
+        pagesize,
         query
       }).then(backData => {
         // console.log(backData)
