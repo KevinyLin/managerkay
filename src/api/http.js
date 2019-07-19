@@ -150,3 +150,15 @@ export const goods = ({
 export const deleteGoods = ({id})=>{
     return managerAxios.delete(`goods/${id}`)
 }
+
+//暴露接口  -  角色列表
+export const getRoles = ()=>{
+    return managerAxios.get(`/roles`)
+}  
+
+//暴露接口  -  分配用户角色
+export const disRoles = ({id,rid})=>{
+    return managerAxios.put(`/users/${id}/role`,{
+        rid
+    })
+}  
