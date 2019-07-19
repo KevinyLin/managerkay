@@ -80,7 +80,7 @@
         :data="data"
         show-checkbox
         node-key="id"
-        :default-checked-keys="[100]"
+        :default-checked-keys="checkedkeys"
         :props="defaultProps"
         default-expand-all
       ></el-tree>
@@ -156,7 +156,9 @@ export default {
       defaultProps: {
         children: "children",
         label: "authName"
-      }
+      },
+      //权限树默认被选中
+      checkedkeys:[]
     };
   },
   created() {
@@ -167,15 +169,20 @@ export default {
         this.tableData = backData.data.data;
       }
     });
-    //获取权限树并渲染
-    rightsTree().then(backData => {
-      // console.log(backData);
-      if(backData.data.meta.status==200){
-        this.data = backData.data.data
-      }
-    });
+    //一进来获取权限树
+    this.getTree();
   },
   methods: {
+    //获取权限树
+    getTree() {
+      //获取权限树并渲染
+      rightsTree().then(backData => {
+        // console.log(backData);
+        if (backData.data.meta.status == 200) {
+          this.data = backData.data.data;
+        }
+      });
+    },
     //删除指定权限
     delrights(role, rights) {
       // console.log(roleId,rightsId)
@@ -190,8 +197,47 @@ export default {
     },
     //打开权限分配
     openTree(row) {
+      //每次进来重新获取权限树
+      this.getTree();
+      console.log(row)
+      //声明个变量来暂存遍历出来的权限id
+      let checkedkeys = [];
+      //使用遍历来获取
+      // for(let i =0;i<row.children.length;i++){
+      //   //第一层循环
+      //   // checkedkeys.push(row.children[i].id)
+      //   let secChildren = row.children[i].children
+      //   for(let i =0;i<secChildren.length;i++){
+      //     //第二层循环
+      //     // checkedkeys.push(secChildren[i].id)
+      //     let thrChildren = secChildren[i].children
+      //     for(let i =0;i<thrChildren.length;i++){
+      //       //第三层循环
+      //       checkedkeys.push(thrChildren[i].id)
+      //     }
+      //   }
+      // }
+
+      //使用递归来获取权限树默认选中权限
+      function addCheckedKeys(items){
+        for(let i =0;i<items.children.length;i++){
+          //判断还有没有儿子  如果还有则继续调用自己 没有则退出 返回最底层的id
+          if(items.children[i].children){
+            //还有儿子 调用自己
+            addCheckedKeys(items.children[i])
+          }else{
+            //没有儿子 返回id添加进数组
+            checkedkeys.push(items.children[i].id)
+          }
+        }
+      }
+
+      addCheckedKeys(row);
+      // console.log(checkedkeys)
+      // 将遍历完的值重新复制给data中的checkedkeys
+      this.checkedkeys = checkedkeys;
+      //弹框
       this.treeFormVisible = true;
-      // console.log(row)
     }
   }
 };
