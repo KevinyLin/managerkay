@@ -172,3 +172,10 @@ export const delRoleRights = (roleId,rightsId)=>{
 export const rightsTree = () => {
     return managerAxios.get(`rights/tree`)
 }
+
+//暴露接口   -  角色授权
+export const roleRights = ({roleId,rids}) => {
+    return managerAxios.post(`roles/${roleId}/rights`,{
+        rids
+    })
+}

@@ -83,23 +83,26 @@
         :default-checked-keys="checkedkeys"
         :props="defaultProps"
         default-expand-all
+        ref="tree"
       ></el-tree>
       <div slot="footer" class="dialog-footer">
         <el-button @click="treeFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="treeFormVisible = false">确 定</el-button>
+        <el-button type="primary" @click="roleRights">确 定</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { getRoles, delRoleRights, rightsTree } from "../api/http";
+import { getRoles, delRoleRights, rightsTree,roleRights } from "../api/http";
 export default {
   name: "roles",
   data() {
     return {
       //权限分配对话框
       treeFormVisible: false,
+      //正在编辑的角色
+      editRole:{},
       //表格数据
       tableData: [],
       //权限树数据
@@ -173,6 +176,20 @@ export default {
     this.getTree();
   },
   methods: {
+    //角色授权
+    roleRights(){
+      // console.log(this.$refs.tree.getCheckedKeys());
+      const rids = this.$refs.tree.getCheckedKeys().join(',');
+      const roleId = this.editRole.id;
+      //  console.log(checkedkeys);
+      roleRights({roleId,rids}).then(backData=>{
+        // console.log(backData)
+        if(backData.data.meta.status==200){
+          this.treeFormVisible = false;
+          this.$message.success(backData.data.meta.msg)
+        }
+      })
+    },
     //获取权限树
     getTree() {
       //获取权限树并渲染
@@ -236,6 +253,8 @@ export default {
       // console.log(checkedkeys)
       // 将遍历完的值重新复制给data中的checkedkeys
       this.checkedkeys = checkedkeys;
+      //在正在编辑的角色
+      this.editRole = row
       //弹框
       this.treeFormVisible = true;
     }
