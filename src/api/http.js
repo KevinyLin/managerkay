@@ -162,3 +162,8 @@ export const disRoles = ({id,rid})=>{
         rid
     })
 }  
+
+//暴露接口  -  删除角色指定权限
+export const delRoleRights = (roleId,rightsId)=>{
+    return managerAxios.delete(`/roles/${roleId}/rights/${rightsId}`)
+}  
