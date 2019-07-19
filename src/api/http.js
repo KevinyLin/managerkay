@@ -167,3 +167,8 @@ export const disRoles = ({id,rid})=>{
 export const delRoleRights = (roleId,rightsId)=>{
     return managerAxios.delete(`/roles/${roleId}/rights/${rightsId}`)
 }  
+
+//暴露接口   -  权限列表树数据
+export const rightsTree = () => {
+    return managerAxios.get(`rights/tree`)
+}
