@@ -11,13 +11,14 @@
 <script>
 // 导入echarts
 import echarts from "echarts";
+import { reports } from "../api/http";
 export default {
   name: "reports",
   data() {
     return {
       option: {
         title: {
-          text: "堆叠区域图"
+          text: "用户来源"
         },
         tooltip: {
           trigger: "axis",
@@ -103,10 +104,27 @@ export default {
   mounted() {
     // 基于准备好的dom，初始化echarts实例
     // console.log(this.$refs.reportsdiv)
-    const myChart = echarts.init(this.$refs.reportsdiv);
-
-    // // 使用刚指定的配置项和数据显示图表。
-    myChart.setOption(this.option);
+    // const myChart = echarts.init(this.$refs.reportsdiv);
+    // // // 使用刚指定的配置项和数据显示图表。
+    // myChart.setOption(this.option);
+  },
+  created() {
+    reports().then(backData => {
+      console.log(backData);
+      if (backData.data.meta.status == 200) {
+        for (const key in backData.data.data) {
+          this.option[key] = backData.data.data[key];
+          this.$nextTick(() => {
+            var myChart = echarts.init(this.$refs.reportsdiv);
+            myChart.setOption(this.option);
+          });
+          // const myChart = echarts.init(this.$refs.reportsdiv);
+          // // // 使用刚指定的配置项和数据显示图表。
+          // myChart.setOption(this.option);
+        }
+        // this.option = backData.data.data;
+      }
+    });
   }
 };
 </script>

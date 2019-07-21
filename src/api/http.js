@@ -209,3 +209,8 @@ export const categories = () => {
         }
     })
 }
+
+//暴露接口   -  数据报表
+export const reports = () => {
+    return managerAxios.get(`/reports/type/1`)
+}
