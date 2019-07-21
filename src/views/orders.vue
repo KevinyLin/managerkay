@@ -41,6 +41,16 @@
     <!-- 编辑订单对话框 -->
     <el-dialog title="修改订单地址(未完成)" :visible.sync="dialogFormVisible">
       <el-form :model="form">
+        <el-form-item label="省市区/县" label-width="120px">
+          <!-- <el-cascader
+            v-model="value"
+            :options="options"
+            :props="{ expandTrigger: 'hover' }"
+            @change="handleChange"
+          ></el-cascader>-->
+          <!-- 插件实现省市联动 -->
+          <VDistpicker></VDistpicker>
+        </el-form-item>
         <el-form-item label="详细地址" label-width="120px">
           <el-input v-model="form.name" autocomplete="off"></el-input>
         </el-form-item>
@@ -55,8 +65,12 @@
 
 <script>
 import { orders } from "../api/http";
+//省市联动第三方插件v-distpicker
+import VDistpicker from "v-distpicker";
+import options from "../assets/city_data_2017";
 export default {
   name: "orders",
+  components: { VDistpicker },
   data() {
     return {
       //编辑对话框是否显示
@@ -70,7 +84,11 @@ export default {
       //页容量
       pagesize: 10,
       //表格数据
-      tableData: []
+      tableData: [],
+      //省市联动数据
+      options,
+      //省市联动双向绑定
+      value: []
     };
   },
   methods: {
