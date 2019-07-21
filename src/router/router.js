@@ -15,11 +15,15 @@ import error from '../views/error.vue'
 import users from '../views/users.vue'
 import roles from '../views/roles.vue'
 import rights from '../views/rights.vue'
-import goods from '../views/goods.vue'
 import categories from '../views/categories.vue'
 import orders from '../views/orders.vue'
 import params from '../views/params.vue'
 import reports from '../views/reports.vue'
+
+
+import goods from '../views/goods/goods.vue'
+import goodsIndex from '../views/goods/components/goodsIndex.vue'
+import goodsAdd from '../views/goods/components/goodsAdd.vue'
 
 //路由规则
 const routes = [
@@ -46,7 +50,17 @@ const routes = [
       },
       {
         path:'goods',
-        component:goods
+        component:goods,
+        children:[
+          {
+            path:'',
+            component:goodsIndex
+          },
+          {
+            path:'add',
+            component:goodsAdd
+          }
+        ]
       },
       {
         path:'categories',

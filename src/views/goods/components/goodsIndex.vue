@@ -1,7 +1,5 @@
 <template>
   <div>
-    <!-- 顶部面包屑 -->
-    <mybread nav1="商品管理" nav2="商品列表"></mybread>
     <el-row>
       <el-col :span="4">
         <!-- 输入框 -->
@@ -16,7 +14,7 @@
       </el-col>
       <el-col :span="2">
         <!-- 按钮 -->
-        <el-button type="success" plain class="mybtn">添加商品</el-button>
+        <el-button type="success" plain class="mybtn" @click="goGoodsAdd">添加商品</el-button>
       </el-col>
     </el-row>
 
@@ -32,7 +30,13 @@
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button type="primary" plain icon="el-icon-edit" size="mini"></el-button>
-          <el-button type="danger" plain icon="el-icon-delete" size="mini" @click="deleteOne(scope.row)" ></el-button>
+          <el-button
+            type="danger"
+            plain
+            icon="el-icon-delete"
+            size="mini"
+            @click="deleteOne(scope.row)"
+          ></el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -50,9 +54,9 @@
 </template>
 
 <script>
-import { goods,deleteGoods } from "../api/http";
+import { goods, deleteGoods } from "../../../api/http";
 export default {
-  name: "goods",
+  name: "goodsIndex",
   data() {
     return {
       //搜索框双向绑定
@@ -68,8 +72,12 @@ export default {
     };
   },
   methods: {
+    //去商品添加页
+    goGoodsAdd() {
+      this.$router.push("/index/goods/add");
+    },
     //删除一个商品
-    deleteOne(row){
+    deleteOne(row) {
       // console.log(row)
       this.$confirm("此操作将永久删除该商品数据, 是否继续?", "警告", {
         confirmButtonText: "确定",
@@ -77,7 +85,7 @@ export default {
         type: "warning"
       })
         .then(() => {
-          deleteGoods({id:row.goods_id}).then(backData => {
+          deleteGoods({ id: row.goods_id }).then(backData => {
             // console.log(backData)
             if (backData.data.meta.status == 200) {
               //删除成功
@@ -96,7 +104,7 @@ export default {
     },
     //搜索商品
     searchGoods() {
-      this.getGoodsList(this.pageIndex, this.pagesize,this.query);
+      this.getGoodsList(this.pageIndex, this.pagesize, this.query);
     },
     handleSizeChange(val) {
       this.pagesize = val;

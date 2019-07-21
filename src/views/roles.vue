@@ -352,11 +352,8 @@ export default {
     //角色授权
     roleRights() {
       // console.log(this.$refs.tree.getCheckedKeys());
-      const arr1 = this.$refs.tree.getCheckedKeys();
       // console.log(this.$refs.tree.getHalfCheckedKeys());
-      const arr2 = this.$refs.tree.getHalfCheckedKeys();
-
-      const rids = [...arr1, ...arr2].join(",");
+      const rids = [...this.$refs.tree.getCheckedKeys(), ...this.$refs.tree.getHalfCheckedKeys()].join(",");
       // console.log(rids)
       const roleId = this.editRole.id;
       roleRights({ roleId, rids }).then(backData => {
