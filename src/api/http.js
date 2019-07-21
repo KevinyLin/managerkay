@@ -179,3 +179,24 @@ export const roleRights = ({roleId,rids}) => {
         rids
     })
 }
+
+//暴露接口   -  添加角色
+export const addRole = ({roleName,roleDesc}) => {
+    return managerAxios.post(`/roles`,{
+        roleName,
+        roleDesc
+    })
+}
+
+//暴露接口   -  删除角色
+export const removeRole = ({id}) => {
+    return managerAxios.delete(`/roles/${id}`)
+}
+
+//暴露接口   -  编辑角色
+export const editRole = ({id,roleName,roleDesc}) => {
+    return managerAxios.put(`/roles/${id}`,{
+        roleName,
+        roleDesc
+    })
+}
