@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 顶部面包屑 -->
-    <mybread nav1='商品管理' nav2='商品分类'></mybread>
+    <mybread nav1="商品管理" nav2="商品分类"></mybread>
     <el-row>
       <el-col :span="2">
         <!-- 按钮 -->
@@ -10,16 +10,35 @@
     </el-row>
 
     <!-- table -->
-    <el-table :data="tableData" style="width: 100%" border>
-      <el-table-column prop="date" label="日期" width="180"></el-table-column>
-      <el-table-column prop="name" label="姓名" width="180"></el-table-column>
-      <el-table-column prop="address" label="地址"></el-table-column>
+    <el-table :data="tableData" style="width: 100%" border row-key="cat_id">
+      <el-table-column prop="cat_name" label="分类名称" width="320"></el-table-column>
+      <el-table-column label="级别" width="180">
+        <template slot-scope="scope">
+          {{scope.row.cat_level | formatLevel}}
+        </template>
+      </el-table-column>
+      <el-table-column label="是否有效" width="180">
+        <template slot-scope="scope">
+          {{scope.row.cat_deleted | formatDeleted}}
+        </template>
+      </el-table-column>
+      <el-table-column label="操作">
+        <template slot-scope="scope">
+          <el-button type="primary" plain icon="el-icon-edit" size="mini"></el-button>
+          <el-button
+            type="danger"
+            plain
+            icon="el-icon-delete"
+            size="mini"
+          ></el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <!-- 分页 -->
     <el-pagination
       @current-change="handleCurrentChange"
       :current-page="pageIndex"
-      :page-size="10"
+      :page-size="5"
       layout="total, prev, pager, next, jumper"
       :total="400"
     ></el-pagination>
@@ -27,6 +46,7 @@
 </template>
 
 <script>
+import { categories } from "../api/http";
 export default {
   name: "categories",
   data() {
@@ -34,36 +54,41 @@ export default {
       //当前页
       pageIndex: 1,
       //表格数据
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1517 弄"
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1519 弄"
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1516 弄"
-        }
-      ]
+      tableData: []
     };
   },
   methods: {
+    //当前页改变时
     handleCurrentChange() {}
+  },
+  created() {
+    categories().then(backData => {
+      // console.log(backData)
+      if (backData.data.meta.status == 200) {
+        this.tableData = backData.data.data;
+      }
+    });
+  },
+  filters:{
+    formatLevel(num){
+      switch (num) {
+        case 0:
+          return '一级'
+          break;
+        case 1:
+          return '二级'
+          break;
+        case 2:
+          return '三级'
+          break;
+      }
+    },
+    formatDeleted(youxiao){
+      return youxiao?'无效':'有效';
+    }
   }
 };
 </script>
 
 <style lang='less' scoped>
-
 </style>

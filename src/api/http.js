@@ -200,3 +200,12 @@ export const editRole = ({id,roleName,roleDesc}) => {
         roleDesc
     })
 }
+
+//暴露接口   -  商品分类列表
+export const categories = () => {
+    return managerAxios.get(`/categories`,{
+        params:{
+            type:3
+        }
+    })
+}
