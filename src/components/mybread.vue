@@ -1,6 +1,6 @@
 <template>
   <el-breadcrumb separator-class="el-icon-arrow-right" class="my-bread">
-    <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+    <el-breadcrumb-item :to="{ path: '/index' }">首页</el-breadcrumb-item>
     <el-breadcrumb-item>{{nav1}}</el-breadcrumb-item>
     <el-breadcrumb-item>{{nav2}}</el-breadcrumb-item>
   </el-breadcrumb>

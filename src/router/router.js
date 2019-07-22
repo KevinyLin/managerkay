@@ -7,23 +7,23 @@ import Vue from 'vue'
 Vue.use(VueRouter)
 
 //导入组件
-import index from '../views/index.vue'
-import login from '../views/login.vue'
-import error from '../views/error.vue'
+const index = () => import('../views/index.vue')
+const login = () => import('../views/login.vue')
+const error = () => import('../views/error.vue')
 
 //导入嵌套路由组件
-import users from '../views/users.vue'
-import roles from '../views/roles.vue'
-import rights from '../views/rights.vue'
-import categories from '../views/categories.vue'
-import orders from '../views/orders.vue'
-import params from '../views/params.vue'
-import reports from '../views/reports.vue'
+const users = () => import('../views/users.vue')
+const roles = () => import('../views/roles.vue')
+const rights = () => import('../views/rights.vue')
+const categories = () => import('../views/categories.vue')
+const orders = () => import('../views/orders.vue')
+const params = () => import('../views/params.vue')
+const reports = () => import('../views/reports.vue')
 
 
-import goods from '../views/goods/goods.vue'
-import goodsIndex from '../views/goods/components/goodsIndex.vue'
-import goodsAdd from '../views/goods/components/goodsAdd.vue'
+const goods = () => import('../views/goods/goods.vue')
+const goodsIndex = () => import('../views/goods/components/goodsIndex.vue')
+const goodsAdd = () => import('../views/goods/components/goodsAdd.vue')
 
 //路由规则
 const routes = [
@@ -35,48 +35,46 @@ const routes = [
   {
     path: '/index',
     component: index,
-    children:[
-      {
-        path:'users',
-        component:users
+    children: [{
+        path: 'users',
+        component: users
       },
       {
-        path:'roles',
-        component:roles
+        path: 'roles',
+        component: roles
       },
       {
-        path:'rights',
-        component:rights
+        path: 'rights',
+        component: rights
       },
       {
-        path:'goods',
-        component:goods,
-        children:[
-          {
-            path:'',
-            component:goodsIndex
+        path: 'goods',
+        component: goods,
+        children: [{
+            path: '',
+            component: goodsIndex
           },
           {
-            path:'add',
-            component:goodsAdd
+            path: 'add',
+            component: goodsAdd
           }
         ]
       },
       {
-        path:'categories',
-        component:categories
+        path: 'categories',
+        component: categories
       },
       {
-        path:'orders',
-        component:orders
+        path: 'orders',
+        component: orders
       },
       {
-        path:'params',
-        component:params
+        path: 'params',
+        component: params
       },
       {
-        path:'reports',
-        component:reports
+        path: 'reports',
+        component: reports
       }
     ]
   },
@@ -91,13 +89,13 @@ const routes = [
   },
   //统一错误页
   {
-    path:'/error',
-    component:error
+    path: '/error',
+    component: error
   },
   //重定向实现错误URL跳转统一错误页
   {
-    path:'*',
-    redirect:'/error'
+    path: '*',
+    redirect: '/error'
   }
 ]
 
