@@ -492,6 +492,7 @@ export default {
   }
   .my-tag {
     margin-right: 10px;
+    margin-bottom: 10px;
   }
 }
 
