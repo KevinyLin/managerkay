@@ -114,15 +114,14 @@ export default {
       if (backData.data.meta.status == 200) {
         for (const key in backData.data.data) {
           this.option[key] = backData.data.data[key];
-          this.$nextTick(() => {
-            var myChart = echarts.init(this.$refs.reportsdiv);
-            myChart.setOption(this.option);
-          });
-          // const myChart = echarts.init(this.$refs.reportsdiv);
-          // // // 使用刚指定的配置项和数据显示图表。
-          // myChart.setOption(this.option);
+          // this.$nextTick(() => {
+          //   var myChart = echarts.init(this.$refs.reportsdiv);
+          //   myChart.setOption(this.option);
+          // });
+          const myChart = echarts.init(this.$refs.reportsdiv);
+          // // 使用刚指定的配置项和数据显示图表。
+          myChart.setOption(this.option);
         }
-        // this.option = backData.data.data;
       }
     });
   }

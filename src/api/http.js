@@ -114,18 +114,27 @@ export const rights = () => {
 }
 
 //修改用户状态
-export const changeState = ({id,type})=>{
+export const changeState = ({
+    id,
+    type
+}) => {
     return managerAxios.put(`users/${id}/state/${type}`)
 }
 
 //删除用户
-export const deleteUser = ({id})=>{
+export const deleteUser = ({
+    id
+}) => {
     return managerAxios.delete(`users/${id}`)
 }
 
 //修改用户信息
-export const putUser = ({id,email,mobile})=>{
-    return managerAxios.put(`users/${id}`,{
+export const putUser = ({
+    id,
+    email,
+    mobile
+}) => {
+    return managerAxios.put(`users/${id}`, {
         email,
         mobile
     })
@@ -147,26 +156,31 @@ export const goods = ({
 }
 
 //删除商品
-export const deleteGoods = ({id})=>{
+export const deleteGoods = ({
+    id
+}) => {
     return managerAxios.delete(`goods/${id}`)
 }
 
 //暴露接口  -  角色列表
-export const getRoles = ()=>{
+export const getRoles = () => {
     return managerAxios.get(`/roles`)
-}  
+}
 
 //暴露接口  -  分配用户角色
-export const disRoles = ({id,rid})=>{
-    return managerAxios.put(`/users/${id}/role`,{
+export const disRoles = ({
+    id,
+    rid
+}) => {
+    return managerAxios.put(`/users/${id}/role`, {
         rid
     })
-}  
+}
 
 //暴露接口  -  删除角色指定权限
-export const delRoleRights = (roleId,rightsId)=>{
+export const delRoleRights = (roleId, rightsId) => {
     return managerAxios.delete(`/roles/${roleId}/rights/${rightsId}`)
-}  
+}
 
 //暴露接口   -  权限列表树数据
 export const rightsTree = () => {
@@ -174,28 +188,40 @@ export const rightsTree = () => {
 }
 
 //暴露接口   -  角色授权
-export const roleRights = ({roleId,rids}) => {
-    return managerAxios.post(`roles/${roleId}/rights`,{
+export const roleRights = ({
+    roleId,
+    rids
+}) => {
+    return managerAxios.post(`roles/${roleId}/rights`, {
         rids
     })
 }
 
 //暴露接口   -  添加角色
-export const addRole = ({roleName,roleDesc}) => {
-    return managerAxios.post(`/roles`,{
+export const addRole = ({
+    roleName,
+    roleDesc
+}) => {
+    return managerAxios.post(`/roles`, {
         roleName,
         roleDesc
     })
 }
 
 //暴露接口   -  删除角色
-export const removeRole = ({id}) => {
+export const removeRole = ({
+    id
+}) => {
     return managerAxios.delete(`/roles/${id}`)
 }
 
 //暴露接口   -  编辑角色
-export const editRole = ({id,roleName,roleDesc}) => {
-    return managerAxios.put(`/roles/${id}`,{
+export const editRole = ({
+    id,
+    roleName,
+    roleDesc
+}) => {
+    return managerAxios.put(`/roles/${id}`, {
         roleName,
         roleDesc
     })
@@ -203,9 +229,9 @@ export const editRole = ({id,roleName,roleDesc}) => {
 
 //暴露接口   -  商品分类列表
 export const categories = () => {
-    return managerAxios.get(`/categories`,{
-        params:{
-            type:3
+    return managerAxios.get(`/categories`, {
+        params: {
+            type: 3
         }
     })
 }
@@ -213,4 +239,45 @@ export const categories = () => {
 //暴露接口   -  数据报表
 export const reports = () => {
     return managerAxios.get(`/reports/type/1`)
+}
+
+
+//暴露接口   -  获取添加分类的列表2层
+export const getCategories = () => {
+    return managerAxios.get(`/categories`, {
+        params: {
+            type: 2
+        }
+    })
+}
+
+//暴露接口   -  获取添加分类的列表3层
+export const getCategoriesT = () => {
+    return managerAxios.get(`/categories`, {
+        params: {
+            type: 3
+        }
+    })
+}
+
+//暴露接口   -  获取参数列表(静态)
+export const getParamsSta = ({
+    id
+}) => {
+    return managerAxios.get(`/categories/${id}/attributes`, {
+        params: {
+            sel: 'only'
+        }
+    })
+}
+
+//暴露接口   -  获取参数列表(动态)
+export const getParamsDny = ({
+    id
+}) => {
+    return managerAxios.get(`/categories/${id}/attributes`, {
+        params: {
+            sel: 'many'
+        }
+    })
 }

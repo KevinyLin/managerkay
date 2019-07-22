@@ -5,48 +5,144 @@
     <!-- alert -->
     <el-alert title="注意 : 只允许为第三级分类设置相关参数!" type="warning" show-icon class="myalert"></el-alert>
     <!-- 级联选择器 -->
-    请选择商品分类 : 
+    请选择商品分类 :
     <el-cascader
       v-model="value"
       :options="options"
-      :props="{ expandTrigger: 'hover' }"
-      @change="handleChange"
-      placeholder='请选择商品分类'
+      :props="{ expandTrigger: 'hover',
+            value:'cat_id',
+            label:'cat_name' }"
+      placeholder="请选择商品分类"
       class="mycascder"
+      @change="handleChange"
     ></el-cascader>
     <!-- tab -->
     <el-tabs v-model="activeName" @tab-click="handleClick" class="mytab">
       <el-tab-pane label="动态参数" name="first">
-        <el-button type="primary" disabled class="mybtn">添加动态参数</el-button>
-        <el-table :data="tableData" border style="width: 100%">
-          <el-table-column prop="date" label="日期" width="180"></el-table-column>
-          <el-table-column prop="name" label="姓名" width="180"></el-table-column>
-          <el-table-column prop="address" label="地址"></el-table-column>
+        <el-button
+          type="primary"
+          :disabled="btn"
+          class="mybtn"
+          @click="dialogFormVisible=true"
+        >添加动态参数</el-button>
+        <el-table :data="dnyTableData" border style="width: 100%">
+          <el-table-column type="expand">
+            <template slot-scope="scope">
+              <el-tag
+                :key="tag"
+                v-for="tag in scope.row.attr_vals"
+                closable
+                :disable-transitions="false"
+                @close="handleClose(tag,scope.row.attr_vals)"
+                class="my-tag"
+              >{{tag}}</el-tag>
+              <!-- 动态编辑tag -->
+              <el-input
+                class="input-new-tag"
+                v-if="inputVisible"
+                v-model="inputValue"
+                ref="saveTagInput"
+                size="small"
+                @keyup.enter.native="handleInputConfirm(scope.row.attr_vals)"
+                @blur="handleInputConfirm(scope.row.attr_vals)"
+              ></el-input>
+              <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>
+            </template>
+          </el-table-column>
+          <el-table-column type="index" width="50"></el-table-column>
+          <el-table-column prop="attr_name" label="商品参数" width="200"></el-table-column>
+          <el-table-column label="操作">
+            <template slot-scope="scope">
+              <el-button type="primary" plain icon="el-icon-edit" size="mini"></el-button>
+              <el-button type="danger" plain icon="el-icon-delete" size="mini"></el-button>
+            </template>
+          </el-table-column>
         </el-table>
       </el-tab-pane>
       <el-tab-pane label="静态参数" name="second">
-        <el-button type="primary" disabled class="mybtn">添加静态参数</el-button>
-        <el-table :data="tableData" border style="width: 100%">
-          <el-table-column prop="date" label="日期" width="180"></el-table-column>
-          <el-table-column prop="name" label="姓名" width="180"></el-table-column>
-          <el-table-column prop="address" label="地址"></el-table-column>
+        <el-button type="primary" :disabled="btn" class="mybtn" @click='staFormVisible=true'>添加静态参数</el-button>
+        <el-table :data="staTableData" border style="width: 100%">
+          <el-table-column type="index" width="50"></el-table-column>
+          <el-table-column prop="attr_name" label="属性名称" width="200"></el-table-column>
+          <el-table-column prop="attr_vals" label="属性值" width="700"></el-table-column>
+          <el-table-column label="操作">
+            <template slot-scope="scope">
+              <el-button type="primary" plain icon="el-icon-edit" size="mini"></el-button>
+              <el-button type="danger" plain icon="el-icon-delete" size="mini"></el-button>
+            </template>
+          </el-table-column>
         </el-table>
       </el-tab-pane>
     </el-tabs>
+
+    <!-- 添加动态参数对话框 -->
+    <el-dialog title="添加动态参数" :visible.sync="dialogFormVisible">
+      <el-form :model="manyForm" :rules="rules" ref="ruleForm">
+        <el-form-item label="动态参数" label-width="120px" prop="name">
+          <el-input v-model="manyForm.many" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- 添加静态参数对话框 -->
+    <el-dialog title="添加静态参数" :visible.sync="staFormVisible">
+      <el-form :model="onlyForm" :rules="rules" ref="ruleForm">
+        <el-form-item label="静态参数" label-width="120px" prop="name">
+          <el-input v-model="onlyForm.only" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="静态参数值" label-width="120px" prop="value">
+          <el-input v-model="onlyForm.only" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="staFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="staFormVisible = false">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import { getCategoriesT, getParamsSta, getParamsDny } from "../api/http";
 export default {
   name: "params",
   data() {
     return {
+      //添加静态参数对话框
+      staFormVisible:false,
+      //添加静态参数数据
+      onlyForm: {
+        only: ""
+      },
+      //添加动态参数对话框
+      dialogFormVisible: false,
+      //添加动态参数数据
+      manyForm: {
+        many: ""
+      },
+      //验证规则
+      rules: {
+        name: [{ required: true, message: "请输入参数名称", trigger: "blur" }],
+        value: [{ required: true, message: "请输入参数值", trigger: "blur" }]
+      },
       //tab数据绑定 默认选中第一个
       activeName: "first",
       //table数据
       value: [],
-      //table数据
-      tableData:[],
+      //静态table数据
+      staTableData: [],
+      //添加参数btn是否启用
+      btn: true,
+      //动态table数据
+      dnyTableData: [],
+      //动态编辑tag
+      inputVisible: false,
+      inputValue: "",
+      //级联选择器数据
       options: [
         {
           value: "zhinan",
@@ -318,27 +414,100 @@ export default {
     };
   },
   methods: {
+    //动态tag事件
+    showInput() {
+      this.inputVisible = true;
+      this.$nextTick(_ => {
+        this.$refs.saveTagInput.$refs.input.focus();
+      });
+    },
+
+    handleInputConfirm(arr) {
+      let inputValue = this.inputValue;
+      if (inputValue) {
+        arr.push(inputValue);
+      }
+      this.inputVisible = false;
+      this.inputValue = "";
+    },
+
+    //tag关闭事件
+    handleClose(tag, arr) {
+      arr.splice(arr.indexOf(tag), 1);
+    },
+    //级联选择器改变触发事件
     handleChange(value) {
-      console.log(value);
+      // console.log(value);
+      //获取最后一级的id发送请求
+      // console.log(value[value.length-1]);
+      const id = value[value.length - 1];
+      //获取静态态数据
+      getParamsSta({ id }).then(backData => {
+        // console.log(backData)
+        if (backData.data.meta.status == 200) {
+          this.staTableData = backData.data.data;
+        }
+      });
+      //获取动态参数
+      getParamsDny({ id }).then(backData => {
+        // console.log(backData)
+        if (backData.data.meta.status == 200) {
+          this.dnyTableData = backData.data.data;
+          for (let i = 0; i < backData.data.data.length; i++) {
+            backData.data.data[i].attr_vals = backData.data.data[
+              i
+            ].attr_vals.split(",");
+          }
+        }
+      });
+      this.btn = false;
     },
     handleClick(tab, event) {
       console.log(tab, event);
     }
+  },
+  created() {
+    //一进来获取分类列表渲染到级联选择器中
+    getCategoriesT().then(backData => {
+      // console.log(backData)
+      if (backData.data.meta.status == 200) {
+        this.options = backData.data.data;
+      }
+    });
   }
 };
 </script>
 
 <style lang='less' scoped>
-.myalert{
+.myalert {
   margin: 20px 0;
 }
-.mycascder{
+.mycascder {
   margin-left: 10px;
 }
-.mytab{
+.mytab {
   margin-top: 20px;
-  .mybtn{ 
+  .mybtn {
     margin-bottom: 15px;
   }
+  .my-tag {
+    margin-right: 10px;
+  }
+}
+
+.el-tag + .el-tag {
+  margin-left: 10px;
+}
+.button-new-tag {
+  margin-left: 10px;
+  height: 32px;
+  line-height: 30px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.input-new-tag {
+  width: 90px;
+  margin-left: 10px;
+  vertical-align: bottom;
 }
 </style>
